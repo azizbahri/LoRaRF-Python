@@ -38,8 +38,8 @@ def map_bits(int_value):
         if bit == '1':
             print(bit_mask[i])
 
-def receive_callback(status):
-    print(f"Received callback message {hex(status)}")
+def receive_callback(status, payload):
+    print(f"Received callback message {payload}")
     map_bits(status)
 
 def setup_lora(LoRa, f, sf, bw, cr, power, prot):

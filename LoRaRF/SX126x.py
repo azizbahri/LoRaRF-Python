@@ -966,7 +966,7 @@ class SX126x(BaseLoRa) :
 
         # call onReceive function
         if callable(self._onReceive) :
-            self._onReceive(self._statusIrq)
+            self._onReceive(self._statusIrq, self._payloadTxRx)
 
     def onTransmit(self, callback) :
 
