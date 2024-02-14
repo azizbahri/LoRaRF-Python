@@ -1,28 +1,23 @@
 import os, sys
 currentdir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(os.path.dirname(os.path.dirname(currentdir)))
-from LoRaRF import SX126x, LoRaSpi, LoRaGpio
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
+from LoRaRF import SX126x
 import time
 import struct
 
-# Begin LoRa radio with connected SPI bus and IO pins (cs and reset) on GPIO
-# SPI is defined by bus ID and cs ID and IO pins defined by chip and offset number
-spi = LoRaSpi(0, 0)
-cs = LoRaGpio(0, 8)
-reset = LoRaGpio(0, 24)
-busy = LoRaGpio(0, 23)
-LoRa = SX126x(spi, cs, reset, busy)
+# Begin LoRa radio and set NSS, reset, busy, IRQ, txen, and rxen pin with connected Raspberry Pi gpio pins
+busId = 0; csId = 0 
+resetPin = 18; busyPin = 20; irqPin = 16; txenPin = 6; rxenPin = -1 
+LoRa = SX126x()
 print("Begin LoRa radio")
-if not LoRa.begin() :
+if not LoRa.begin(busId, csId, resetPin, busyPin, irqPin, txenPin, rxenPin) :
     raise Exception("Something wrong, can't begin LoRa radio")
 
-# Configure LoRa to use TCXO with DIO3 as control
-LoRa.setDio3TcxoCtrl(LoRa.DIO3_OUTPUT_1_8, LoRa.TCXO_DELAY_10)
-print("Set RF module to use TCXO as clock reference")
-
-# Set frequency to 915 Mhz
-LoRa.setFrequency(915000000)
-print("Set frequency to 915 Mhz")
+LoRa.setDio2RfSwitch()
+# Set frequency to 868 Mhz
+LoRa.setFrequency(868000000)
+print("Set frequency to 868 Mhz")
 
 # Set RX gain to boosted gain
 LoRa.setRxGain(LoRa.RX_GAIN_BOOSTED)
@@ -91,3 +86,8 @@ while True :
     status = LoRa.status()
     if status == LoRa.STATUS_CRC_ERR : print("CRC error")
     if status == LoRa.STATUS_HEADER_ERR : print("Packet header error")
+
+try :
+    pass
+except :
+    LoRa.end()

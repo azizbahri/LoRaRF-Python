@@ -1,32 +1,27 @@
 import os, sys
 currentdir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.dirname(os.path.dirname(currentdir)))
-from LoRaRF import SX126x, LoRaSpi, LoRaGpio
+from LoRaRF import SX126x
 import time
 
-# Begin LoRa radio with connected SPI bus and IO pins (cs and reset) on GPIO
-# SPI is defined by bus ID and cs ID and IO pins defined by chip and offset number
-spi = LoRaSpi(0, 0)
-cs = LoRaGpio(0, 8)
-reset = LoRaGpio(0, 24)
-busy = LoRaGpio(0, 23)
-LoRa = SX126x(spi, cs, reset, busy)
+# Begin LoRa radio and set NSS, reset, busy, IRQ, txen, and rxen pin with connected Raspberry Pi gpio pins
+# IRQ pin not used in this example (set to -1). Set txen and rxen pin to -1 if RF module doesn't have one
+busId = 0; csId = 0 
+resetPin = 18; busyPin = 20; irqPin = 16; txenPin = 6; rxenPin = -1 
+LoRa = SX126x()
 print("Begin LoRa radio")
-if not LoRa.begin() :
+if not LoRa.begin(busId, csId, resetPin, busyPin, irqPin, txenPin, rxenPin) :
     raise Exception("Something wrong, can't begin LoRa radio")
 
-# Configure LoRa to use TCXO with DIO3 as control
-print("Set RF module to use TCXO as clock reference")
-LoRa.setDio3TcxoCtrl(LoRa.DIO3_OUTPUT_1_8, LoRa.TCXO_DELAY_10)
-
-# Set frequency to 915 Mhz
-print("Set frequency to 915 Mhz")
-LoRa.setFrequency(915000000)
+LoRa.setDio2RfSwitch()
+# Set frequency to 868 Mhz
+print("Set frequency to 868 Mhz")
+LoRa.setFrequency(868000000)
 
 # Set TX power, default power for SX1262 and SX1268 are +22 dBm and for SX1261 is +14 dBm
 # This function will set PA config with optimal setting for requested TX power
-print("Set TX power to +17 dBm")
-LoRa.setTxPower(17, LoRa.TX_POWER_SX1262)                       # TX power +17 dBm using PA boost pin
+print("Set TX power to +22 dBm")
+LoRa.setTxPower(22, LoRa.TX_POWER_SX1262)                       # TX power +17 dBm using PA boost pin
 
 # Configure modulation parameter including spreading factor (SF), bandwidth (BW), and coding rate (CR)
 # Receiver must have same SF and BW setting with transmitter to be able to receive LoRa packet
@@ -80,3 +75,8 @@ while True :
     # Don't load RF module with continous transmit
     time.sleep(5)
     counter = (counter + 1) % 256
+
+try :
+    pass
+except :
+    LoRa.end()
