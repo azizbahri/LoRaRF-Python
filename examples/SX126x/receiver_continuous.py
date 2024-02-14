@@ -1,7 +1,7 @@
 from LoRaRF import SX126x
 import argparse
-def receive_callback():
-    print("Received callback message")
+def receive_callback(status):
+    print(f"Received callback message {status}")
 
 def setup_lora(LoRa, f, sf, bw, cr, power):
     # Begin LoRa radio and set NSS, reset, busy, IRQ, txen, and rxen pin with connected Raspberry Pi gpio pins
@@ -53,7 +53,6 @@ def setup_lora(LoRa, f, sf, bw, cr, power):
             # Put received packet to message and counter variable
             message = ""
             while LoRa.available() > 1 :
-                print("Reading message")
                 message += chr(LoRa.read())
             counter = LoRa.read()
 
