@@ -1,5 +1,8 @@
 from LoRaRF import SX126x
 import argparse
+def receive_callback():
+    print("Received callback message")
+
 def setup_lora(LoRa, f, sf, bw, cr, power):
     # Begin LoRa radio and set NSS, reset, busy, IRQ, txen, and rxen pin with connected Raspberry Pi gpio pins
     busId = 0; csId = 0 
@@ -8,6 +11,7 @@ def setup_lora(LoRa, f, sf, bw, cr, power):
     if not LoRa.begin(busId, csId, resetPin, busyPin, irqPin, txenPin, rxenPin) :
         raise Exception("Something wrong, can't begin LoRa radio")
 
+    LoRa.onReceive(receive_callback)
     LoRa.setDio2RfSwitch()
     # Set frequency
     print(f"Set frequency to {f} Hz")
