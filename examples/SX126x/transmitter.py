@@ -2,11 +2,11 @@ from LoRaRF import SX126x
 import time
 import argparse
 
-def main(LoRa = None, frequency = 868000000, sf = 7, bw = 125000, power = 22, cr = 5):
+def setup_lora(LoRa,f, sf, bw, cr, power):
 
     # Print configuration to console
     print("\n-- LoRa Transmitter Configuration --")
-    print(f"Frequency = {frequency} Hz")
+    print(f"Frequency = {f} Hz")
     print(f"Spreading factor = {sf}")
     print(f"Bandwidth = {bw} Hz")
     print(f"Transmit power = +{power} dBm")
@@ -24,7 +24,7 @@ def main(LoRa = None, frequency = 868000000, sf = 7, bw = 125000, power = 22, cr
 
     LoRa.setDio2RfSwitch()
     # Set frequency 
-    LoRa.setFrequency(frequency)
+    LoRa.setFrequency(f)
 
     # Set TX power, default power for SX1262 and SX1268 are +22 dBm and for SX1261 is +14 dBm
     # This function will set PA config with optimal setting for requested TX power
@@ -32,7 +32,6 @@ def main(LoRa = None, frequency = 868000000, sf = 7, bw = 125000, power = 22, cr
 
     # Configure modulation parameter including spreading factor (SF), bandwidth (BW), and coding rate (CR)
     # Receiver must have same SF and BW setting with transmitter to be able to receive LoRa packet
-    print("Set modulation parameters:\n\tSpreading factor = 7\n\tBandwidth = 125 kHz\n\tCoding rate = 4/5")
     LoRa.setLoRaModulation(sf, bw, cr)
 
     # Configure packet parameter including header type, preamble length, payload length, and CRC type
@@ -81,34 +80,16 @@ def main(LoRa = None, frequency = 868000000, sf = 7, bw = 125000, power = 22, cr
         counter = (counter + 1) % 256
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='LoRa Transmitter') 
+    parser.add_argument("--f", type=int, default=868000000, help="Frequency in Hz")
+    parser.add_argument("--sf", type=int, default=7, help="Spreading factor")
+    parser.add_argument("--bw", type=int, default=125000, help="Bandwidth in Hz")
+    parser.add_argument("--cr", type=int, default=4, help="Coding rate")
+    parser.add_argument("--power", type=int, default=22, help="Transmit power in dBm")
+    args = parser.parse_args() 
+    LoRa = SX126x()
     try:
-        parser = argparse.ArgumentParser(description='LoRa Transmitter') 
-        parser.add_argument('--frequency', type=int, help='Frequency in Hz')
-        parser.add_argument('--spreading_factor', type=int, help='Spreading factor') 
-        parser.add_argument('--bandwidth', type=int, help='Bandwidth in Hz') 
-        parser.add_argument('--power', type=int, help='Transmit power in dBm') 
-        parser.add_argument('--cr', type=int, help='Codeing rate') 
-        
-        args = parser.parse_args() 
-        if args.cr:
-            cr = args.cr
-        else: cr = 5
-        if args.spreading_factor: 
-            sf = args.spreading_factor 
-        else: sf = 7 
-        if args.bandwidth: 
-            bw = args.bandwidth 
-        else: bw = 125000 
-        if args.power: 
-            power = args.power 
-        else: power = 22
-        args = parser.parse_args()
-        if args.frequency:
-            frequency = args.frequency
-        else:
-            frequency = 868000000
-        LoRa = SX126x()
-        main(LoRa, frequency, sf, bw, power, cr)
+        setup_lora(LoRa,args.f, args.sf, args.bw, args.cr, args.power)
     except KeyboardInterrupt:
         print("Program terminated by user")
     finally:
