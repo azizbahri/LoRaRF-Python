@@ -711,7 +711,7 @@ class SX126x(BaseLoRa) :
         if self.getMode() == self.STATUS_MODE_RX : return False
 
         # clear previous interrupt and set RX done, RX timeout, header error, and CRC error as interrupt source
-        self._irqSetup(self.IRQ_RX_DONE | self.IRQ_TIMEOUT | self.IRQ_HEADER_ERR | self.IRQ_CRC_ERR)
+        self._irqSetup(self.IRQ_ALL)
 
         # set status to RX wait or RX continuous wait
         self._statusWait = self.STATUS_RX_WAIT
