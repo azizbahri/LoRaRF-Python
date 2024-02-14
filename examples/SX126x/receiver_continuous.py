@@ -3,12 +3,12 @@ import argparse
 def receive_callback(status):
     print(f"Received callback message {hex(status)}")
 
-def setup_lora(LoRa, f, sf, bw, cr, power):
+def setup_lora(LoRa, f, sf, bw, cr, power, prot):
     # Begin LoRa radio and set NSS, reset, busy, IRQ, txen, and rxen pin with connected Raspberry Pi gpio pins
     busId = 0; csId = 0 
     resetPin = 18; busyPin = 20; irqPin = 16; txenPin = 6; rxenPin = -1 
     print("Begin LoRa radio")
-    if not LoRa.begin(busId, csId, resetPin, busyPin, irqPin, txenPin, rxenPin, prot=0x1) :
+    if not LoRa.begin(busId, csId, resetPin, busyPin, irqPin, txenPin, rxenPin, prot=prot) :
         raise Exception("Something wrong, can't begin LoRa radio")
 
     LoRa.onReceive(receive_callback)
@@ -84,10 +84,11 @@ if __name__ == "__main__":
     parser.add_argument("--bw", type=int, default=125000, help="Bandwidth in Hz")
     parser.add_argument("--cr", type=int, default=4, help="Coding rate")
     parser.add_argument("--power", type=int, default=22, help="Transmit power in dBm")
+    parser.add_argument("--prot", type=int, default=0, help="Protocol 0: LoRa, 1: FSK")
     args = parser.parse_args()
 
     LoRa = SX126x()
     try:
-        setup_lora(LoRa,args.f, args.sf, args.bw, args.cr, args.power)
+        setup_lora(LoRa,args.f, args.sf, args.bw, args.cr, args.power, args.prot)
     except:
         LoRa.end()
