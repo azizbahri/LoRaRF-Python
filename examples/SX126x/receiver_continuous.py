@@ -49,6 +49,7 @@ def setup_lora(LoRa, f, sf, bw, cr, power):
             # Put received packet to message and counter variable
             message = ""
             while LoRa.available() > 1 :
+                print("Reading message")
                 message += chr(LoRa.read())
             counter = LoRa.read()
 
