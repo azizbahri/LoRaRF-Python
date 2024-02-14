@@ -46,26 +46,26 @@ def setup_lora(LoRa, f, sf, bw, cr, power):
     print(f"Set transmit power to {power} dBm")
     LoRa.setTxPower(power)
 
-    # Receive message continuously
-    while True :
-        # Check for incoming LoRa packet
-        if LoRa.available() :
-            # Put received packet to message and counter variable
-            message = ""
-            while LoRa.available() > 1 :
-                message += chr(LoRa.read())
-            counter = LoRa.read()
+    # # Receive message continuously
+    # while True :
+    #     # Check for incoming LoRa packet
+    #     if LoRa.available() :
+    #         # Put received packet to message and counter variable
+    #         message = ""
+    #         while LoRa.available() > 1 :
+    #             message += chr(LoRa.read())
+    #         counter = LoRa.read()
 
-            # Print received message and counter in serial
-            print(f"{message}  {counter}")
+    #         # Print received message and counter in serial
+    #         print(f"{message}  {counter}")
 
-            # Print packet/signal status including RSSI, SNR, and signalRSSI
-            print("Packet status: RSSI = {0:0.2f} dBm | SNR = {1:0.2f} dB".format(LoRa.packetRssi(), LoRa.snr()))
+    #         # Print packet/signal status including RSSI, SNR, and signalRSSI
+    #         print("Packet status: RSSI = {0:0.2f} dBm | SNR = {1:0.2f} dB".format(LoRa.packetRssi(), LoRa.snr()))
 
-            # Show received status in case CRC or header error occur
-            status = LoRa.status()
-            if status == LoRa.STATUS_CRC_ERR : print("CRC error")
-            if status == LoRa.STATUS_HEADER_ERR : print("Packet header error")
+    #         # Show received status in case CRC or header error occur
+    #         status = LoRa.status()
+    #         if status == LoRa.STATUS_CRC_ERR : print("CRC error")
+    #         if status == LoRa.STATUS_HEADER_ERR : print("Packet header error")
 
 
 
