@@ -290,7 +290,7 @@ class SX126x(BaseLoRa) :
 
 ### COMMON OPERATIONAL METHODS ###
 
-    def begin(self, bus: int = _bus, cs: int = _cs, reset: int = _reset, busy: int = _busy, irq: int = _irq, txen: int = _txen, rxen: int = _rxen, wake: int = _wake) :
+    def begin(self, bus: int = _bus, cs: int = _cs, reset: int = _reset, busy: int = _busy, irq: int = _irq, txen: int = _txen, rxen: int = _rxen, wake: int = _wake, prot: int = 0x01) :
 
         # set spi and gpio pins
         self.setSpi(bus, cs)
@@ -302,7 +302,7 @@ class SX126x(BaseLoRa) :
         self.setStandby(self.STANDBY_RC)
         if self.getMode() != self.STATUS_MODE_STDBY_RC :
             return False
-        self.setPacketType(self.LORA_MODEM)
+        self.setPacketType(prot)
         self._fixResistanceAntenna()
         return True
 

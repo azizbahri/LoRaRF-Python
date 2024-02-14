@@ -8,7 +8,7 @@ def setup_lora(LoRa, f, sf, bw, cr, power):
     busId = 0; csId = 0 
     resetPin = 18; busyPin = 20; irqPin = 16; txenPin = 6; rxenPin = -1 
     print("Begin LoRa radio")
-    if not LoRa.begin(busId, csId, resetPin, busyPin, irqPin, txenPin, rxenPin) :
+    if not LoRa.begin(busId, csId, resetPin, busyPin, irqPin, txenPin, rxenPin, prot=0x1) :
         raise Exception("Something wrong, can't begin LoRa radio")
 
     LoRa.onReceive(receive_callback)
