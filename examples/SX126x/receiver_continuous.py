@@ -46,6 +46,12 @@ def setup_lora(LoRa, f, sf, bw, cr, power):
     print(f"Set transmit power to {power} dBm")
     LoRa.setTxPower(power)
 
+    try:
+        print("Waiting for incoming LoRa packet...")
+        while True:
+            print(".", end="", flush=True)
+    except KeyboardInterrupt:
+        print("Keyboard interrupt detected. Exiting...")
     # # Receive message continuously
     # while True :
     #     # Check for incoming LoRa packet
