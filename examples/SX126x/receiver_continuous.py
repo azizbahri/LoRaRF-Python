@@ -37,6 +37,7 @@ def map_bits(int_value):
     for i, bit in enumerate(reversed(binary_value)):
         if bit == '1':
             print(f"{bit_mask[i]} : ",end="")
+    print("-")
 
 def receive_callback(status, payload):
     print(f"Received callback message {payload}")
