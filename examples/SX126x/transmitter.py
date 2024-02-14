@@ -62,15 +62,15 @@ def setup_lora(LoRa,f, sf, bw, cr, power):
         # write() method must be placed between beginPacket() and endPacket()
         
         
-        LoRa.beginPacket()
         # Loop for 1 second
         start_time = time.time()
         while time.time() - start_time < 1:
             # Your code inside the loop goes here
-            LoRa.write(messageList, len(messageList))
+            LoRa.beginPacket()
+            # LoRa.write(messageList, len(messageList))
             LoRa.write([counter], 1)
+            LoRa.endPacket()
      
-        LoRa.endPacket()
 
         # Print message and counter
         print(f"{message}  {counter}")
