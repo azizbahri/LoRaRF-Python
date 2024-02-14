@@ -1,12 +1,51 @@
 from LoRaRF import SX126x
 import argparse
+
+# Bit Masks
+# Bit mask for packet status
+# 0 TxDone
+# 1 RxDone
+# 2 PreambleDetected
+# 3 SyncWordValid
+# 4 HeaderValid
+# 5 HeaderErr
+# 6 CrcErr
+# 7 CadDone
+# 8 CadDetected
+# 9 Timeout Rx or Tx
+
+
+def map_bits(int_value):
+    # Define the bit mask
+    bit_mask = {
+        0: "TxDone",
+        1: "RxDone",
+        2: "PreambleDetected",
+        3: "SyncWordValid",
+        4: "HeaderValid",
+        5: "HeaderErr",
+        6: "CrcErr",
+        7: "CadDone",
+        8: "CadDetected",
+        9: "Timeout Rx or Tx"
+    }
+
+    # Convert the integer value to binary
+    binary_value = bin(int_value)[2:].zfill(10)
+
+    # Map the bits to the bit mask and print the name of the bit
+    for i, bit in enumerate(reversed(binary_value)):
+        if bit == '1':
+            print(bit_mask[i])
+
 def receive_callback(status):
     print(f"Received callback message {hex(status)}")
+    map_bits(status)
 
 def setup_lora(LoRa, f, sf, bw, cr, power, prot):
     # Begin LoRa radio and set NSS, reset, busy, IRQ, txen, and rxen pin with connected Raspberry Pi gpio pins
-    busId = 0; csId = 0 
-    resetPin = 18; busyPin = 20; irqPin = 16; txenPin = 6; rxenPin = -1 
+    busId = 0; csId = 0
+    resetPin = 18; busyPin = 20; irqPin = 16; txenPin = 6; rxenPin = -1
     print("Begin LoRa radio")
     if not LoRa.begin(busId, csId, resetPin, busyPin, irqPin, txenPin, rxenPin, prot=prot) :
         raise Exception("Something wrong, can't begin LoRa radio")
@@ -46,7 +85,7 @@ def setup_lora(LoRa, f, sf, bw, cr, power, prot):
     print(f"Set transmit power to {power} dBm")
     LoRa.setTxPower(power)
 
-    
+
 
     try:
         print("Waiting for incoming LoRa packet...")
