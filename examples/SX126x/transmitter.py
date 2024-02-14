@@ -1,7 +1,6 @@
 from LoRaRF import SX126x
 import time
 import argparse
-
 def setup_lora(LoRa,f, sf, bw, cr, power):
 
     # Print configuration to console
@@ -61,9 +60,16 @@ def setup_lora(LoRa,f, sf, bw, cr, power):
 
         # Transmit message and counter
         # write() method must be placed between beginPacket() and endPacket()
+        
+        
         LoRa.beginPacket()
-        LoRa.write(messageList, len(messageList))
-        LoRa.write([counter], 1)
+        # Loop for 1 second
+        start_time = time.time()
+        while time.time() - start_time < 1:
+            # Your code inside the loop goes here
+            LoRa.write(messageList, len(messageList))
+            LoRa.write([counter], 1)
+     
         LoRa.endPacket()
 
         # Print message and counter
@@ -78,6 +84,9 @@ def setup_lora(LoRa,f, sf, bw, cr, power):
         # Don't load RF module with continous transmit
         time.sleep(5)
         counter = (counter + 1) % 256
+    
+    
+    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='LoRa Transmitter') 
