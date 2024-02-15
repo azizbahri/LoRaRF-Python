@@ -46,7 +46,7 @@ def setup_lora(LoRa,f, sf, bw, cr, power, prot):
     
     # Set the callback function for receiving messages
     LoRa.onReceive(receive_callback)
-    
+    LoRa._irqSetup(LoRa.IRQ_ALL)
     # Set the DIO2 pin to control the RF switch
     LoRa.setDio2RfSwitch()
     # Set frequency
