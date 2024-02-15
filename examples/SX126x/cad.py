@@ -30,9 +30,16 @@ def map_bits(int_value):
             print(f"{bit_mask[i]} : ",end="")
     print("-")
 
-def receive_callback(status, payload):
-    print(f"Received callback message {payload}")
-    map_bits(status)
+def receive_callback(self):
+    # read() and available() method must be called after request() or listen() method
+    message = ""
+    # available() method return remaining received payload length and will decrement each read() or get() method called
+    while self.available() > 1 :
+        message += chr(self.read())
+    print(f"Received callback message")
+    print(f"Message: {message}")
+    
+    map_bits(self._statusIrq )
 
 def setup_lora(LoRa,f, sf, bw, cr, power, prot):
     # Begin LoRa radio and set NSS, reset, busy, IRQ, txen, and rxen pin with connected Raspberry Pi gpio pins
