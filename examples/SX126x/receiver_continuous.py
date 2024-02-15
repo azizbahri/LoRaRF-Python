@@ -39,11 +39,18 @@ def map_bits(int_value):
             print(f"{bit_mask[i]} : ",end="")
     print("-")
 
-def receive_callback(status, payload):
-    print(f"Received callback message {payload}")
-    map_bits(status)
+def receive_callback(self):
+    # read() and available() method must be called after request() or listen() method
+    message = ""
+    # available() method return remaining received payload length and will decrement each read() or get() method called
+    while self.available() > 1 :
+        message += chr(self.read())
+    print(f"Received callback message")
+    print(f"Message: {message}")
+    
+    map_bits(self._statusIrq )
 
-def setup_lora(LoRa, f, sf, bw, cr, power, prot):
+def setup_lora(LoRa, f, sf, bw, cr, power, prot, preamble):
     # Begin LoRa radio and set NSS, reset, busy, IRQ, txen, and rxen pin with connected Raspberry Pi gpio pins
     busId = 0; csId = 0
     resetPin = 18; busyPin = 20; irqPin = 16; txenPin = 6; rxenPin = -1
@@ -68,14 +75,14 @@ def setup_lora(LoRa, f, sf, bw, cr, power, prot):
     # Configure packet parameter including header type, preamble length, payload length, and CRC type
     print("Set packet parameters:\n\tExplicit header type\n\tPreamble length = 12\n\tPayload Length = 15\n\tCRC on")
     headerType = LoRa.HEADER_EXPLICIT
-    preambleLength = 12
+    preambleLength = preamble
     payloadLength = 15
     crcType = True
     LoRa.setLoRaPacket(headerType, preambleLength, payloadLength, crcType)
 
     # Set syncronize word for public network (0x3444)
     print("Set syncronize word to 0x3444")
-    LoRa.setSyncWord(0x3444)
+    # LoRa.setSyncWord(0x3444)
 
     print("\n-- LoRa Receiver Continuous --\n")
 
@@ -125,10 +132,11 @@ if __name__ == "__main__":
     parser.add_argument("--cr", type=int, default=4, help="Coding rate")
     parser.add_argument("--power", type=int, default=22, help="Transmit power in dBm")
     parser.add_argument("--prot", type=int, default=0, help="Protocol 0: LoRa, 1: FSK")
+    parser.add_argument("--preamble", type=int, default=12, help="Preamble length")
     args = parser.parse_args()
 
     LoRa = SX126x()
     try:
-        setup_lora(LoRa,args.f, args.sf, args.bw, args.cr, args.power, args.prot)
+        setup_lora(LoRa,args.f, args.sf, args.bw, args.cr, args.power, args.prot, args.preamble)
     except:
         LoRa.end()
