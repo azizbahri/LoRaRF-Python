@@ -1,0 +1,9 @@
+modem_cfg:
+  protocol: 1
+  frequency: 868000000
+  spreading_factor: 7
+  bandwidth: 125000
+  coding_rate: 4
+  power: 22
+packet_cfg:
+  preamble_length: 12
