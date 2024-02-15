@@ -62,14 +62,17 @@ def setup_lora(LoRa,f, sf, bw, cr, power, prot):
     LoRa.setLoRaModulation(sf, bw, cr)
     
     LoRa.setCadParams(LoRa.CAD_ON_1_SYMB, 22, 10, LoRa.CAD_EXIT_RX, 2000)
+    LoRa.request(LoRa.RX_CONTINUOUS)
+    LoRa.setCad()
     
     try:
         print("CAD Mode starting")
         while True:
-            LoRa.setCad()
             pass
     except KeyboardInterrupt:
         print("Keyboard interrupt detected. Exiting...")
+    finally:
+        LoRa.end()
 
 
 if __name__ == "__main__":
