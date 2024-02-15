@@ -108,6 +108,7 @@ def setup_lora(LoRa, cfg):
     LoRa.request(LoRa.RX_CONTINUOUS)
 
     # Set transmit power
+    power = modem_cfg['power']
     print(f"Set transmit power to {power} dBm")
     LoRa.setTxPower(power)
 
