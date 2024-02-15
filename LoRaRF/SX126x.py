@@ -953,7 +953,7 @@ class SX126x(BaseLoRa) :
 
         # call onReceive function
         if callable(self._onReceive) :
-            self._onReceive()
+            self._onReceive(self)
 
     def _interruptRxContinuous(self, channel) :
 
@@ -966,7 +966,7 @@ class SX126x(BaseLoRa) :
 
         # call onReceive function
         if callable(self._onReceive) :
-            self._onReceive(self._statusIrq, self._payloadTxRx)
+            self._onReceive(self)
 
     def onTransmit(self, callback) :
 
