@@ -77,11 +77,11 @@ def setup_lora(LoRa, cfg):
     LoRa.setRxGain(LoRa.RX_GAIN_POWER_SAVING)
 
     if prot == LoRa.FSK_MODEM:
-        print("Set FSK modulation parameters:\n\tFrequency deviation = {fdev} kHz\n\tBitrate = 50 kbps")
         bitrate = modem_cfg['bitrate']
         fdev = modem_cfg['frequency_deviation']
         bw = modem_cfg['bandwidth']
         pulse_shape = modem_cfg['pulse_shape']
+        print(f"Set modulation parameters:\n\tBitrate = {bitrate} bps\n\tFrequency deviation = {fdev} Hz\n\tBandwidth = {bw} Hz\n\tPulse shape = {pulse_shape}")
         LoRa.setFskModulation(bitrate, pulse_shape,bw,fdev )
 
         preambleLength = packet_cfg['preamble_length']
