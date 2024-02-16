@@ -74,7 +74,7 @@ def setup_lora(LoRa, cfg):
 
     # Set RX gain to power saving gain
     print("Set RX gain to power saving gain")
-    LoRa.setRxGain(LoRa.RX_GAIN_POWER_SAVING)
+    LoRa.setRxGain(LoRa.RX_GAIN_BOOSTED)
 
     if prot == LoRa.FSK_MODEM:
         bitrate = modem_cfg['bitrate']
