@@ -78,10 +78,22 @@ def setup_lora(LoRa, cfg):
 
     if prot == LoRa.FSK_MODEM:
         print("Set FSK modulation parameters:\n\tFrequency deviation = {fdev} kHz\n\tBitrate = 50 kbps")
-        # bitrate = 50000
-        # LoRa.setFskModulation(bitrate, LoRa.PULSE_NO_FILTER,LoRa.BW_46900,fdev )
+        bitrate = modem_cfg['bitrate']
+        fdev = modem_cfg['frequency_deviation']
+        bw = modem_cfg['bandwidth']
+        pulse_shape = modem_cfg['pulse_shape']
+        LoRa.setFskModulation(bitrate, pulse_shape,bw,fdev )
 
-        # LoRa.setFskPacket()
+        preambleLength = packet_cfg['preamble_length']
+        preambleDetector = packet_cfg['preamble_detector']
+        syncWordLength = packet_cfg['sync_word_length']
+        addrComp = packet_cfg['address_comparator']
+        packetType = packet_cfg['packet_type']
+        payloadLength = packet_cfg['payload_length']
+        crcType = packet_cfg['crc_type']
+        whitening = packet_cfg['whitening']
+        print(f"Set packet parameters:\n\tPreamble length = {preambleLength}\n\tPreamble detector = {preambleDetector}\n\tSync word length = {syncWordLength}\n\tAddress comparator = {addrComp}\n\tPacket type = {packetType}\n\tPayload length = {payloadLength}\n\tCRC type = {crcType}\n\tWhitening = {whitening}")
+        LoRa.setFskPacket(preambleLength, preambleDetector, syncWordLength, addrComp, packetType, payloadLength, crcType, whitening)
     elif prot == LoRa.LORA_MODEM:
         sf = modem_cfg['spreading_factor']
         bw = modem_cfg['bandwidth']

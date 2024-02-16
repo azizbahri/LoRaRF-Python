@@ -1,0 +1,17 @@
+# Martin System handset
+modem_cfg:
+  protocol: 0
+  frequency: 869490000
+  bitrate: 50000
+  bandwidth: 0x14 # 46.9 kHz DSB
+  pulse_shape: 0x00 # No Filter
+  frequency_deviation: 0xFFFFFF
+  power: 22
+packet_cfg:
+  preamble_length: 12
+  preambleDetector: 0 # off
+  addrComp: 0 # address filtering off
+  packetType: 1 # variable length packet
+  payloadLength: 0xFF # max length
+  crcType: 0x01 # no crc
+  whitening: 0 # off
