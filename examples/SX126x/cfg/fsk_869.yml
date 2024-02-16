@@ -9,9 +9,10 @@ modem_cfg:
   power: 22
 packet_cfg:
   preamble_length: 12
-  preambleDetector: 0 # off
-  addrComp: 0 # address filtering off
-  packetType: 1 # variable length packet
-  payloadLength: 0xFF # max length
-  crcType: 0x01 # no crc
+  preamble_detector: 0 # off
+  sync_word_length: 0 # no sync word
+  address_comparator: 0 # address filtering off
+  packet_type: 1 # variable length packet
+  payload_length: 0xFF # max length
+  crc_type: 0x01 # no crc
   whitening: 0 # off
