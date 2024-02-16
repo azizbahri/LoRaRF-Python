@@ -4,7 +4,7 @@
 from LoRaRF import SX126x
 import time
 import argparse
-
+import yaml
 
 def map_bits(int_value):
     # Define the bit mask
