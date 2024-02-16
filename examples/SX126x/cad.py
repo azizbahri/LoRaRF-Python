@@ -41,12 +41,18 @@ def receive_callback(self):
     
     map_bits(self._statusIrq )
 
-def setup_lora(LoRa,f, sf, bw, cr, power, prot):
+def setup_lora(LoRa,cfg):
     # Begin LoRa radio and set NSS, reset, busy, IRQ, txen, and rxen pin with connected Raspberry Pi gpio pins
     busId = 0; csId = 0
     resetPin = 18; busyPin = 20; irqPin = 16; txenPin = 6; rxenPin = -1
     print("Begin LoRa radio")
     
+    modem_cfg = cfg['modem_cfg']
+    cad_cfg = cfg['cad_cfg']
+
+    prot = modem_cfg['protocol']
+    freq = modem_cfg['frequency']
+
     # Set the LoRa radio
     if not LoRa.begin(busId, csId, resetPin, busyPin, irqPin, txenPin, rxenPin, prot=prot) :
         raise Exception("Something wrong, can't begin LoRa radio")
@@ -57,18 +63,29 @@ def setup_lora(LoRa,f, sf, bw, cr, power, prot):
     # Set the DIO2 pin to control the RF switch
     LoRa.setDio2RfSwitch()
     # Set frequency
-    print(f"Set frequency to {f} Hz")
-    LoRa.setFrequency(f)
+    print(f"Set frequency to {freq} Hz")
+    LoRa.setFrequency(freq)
 
     # Set RX gain to power saving gain
-    print("Set RX gain to power saving gain")
-    LoRa.setRxGain(LoRa.RX_GAIN_POWER_SAVING)
+    LoRa.setRxGain(LoRa.RX_GAIN_BOOSTED)
 
-    # Configure modulation parameter including spreading factor (SF), bandwidth (BW), and coding rate (CR)
-    print(f"Set modulation parameters:\n\tSpreading factor = {sf}\n\tBandwidth = {bw} Hz\n\tCoding rate = {cr}")
-    LoRa.setLoRaModulation(sf, bw, cr)
-    
-    LoRa.setCadParams(LoRa.CAD_ON_1_SYMB, 22, 10, LoRa.CAD_EXIT_RX, 2000)
+    if prot == LoRa.LORA_MODEM:
+        sf = modem_cfg['spreading_factor']
+        bw = modem_cfg['bandwidth']
+        cr = modem_cfg['coding_rate']
+        print(f"Set modulation parameters:\n\tSpreading factor = {sf}\n\tBandwidth = {bw} Hz\n\tCoding rate = {cr}")
+
+        LoRa.setLoRaModulation(sf, bw, cr)
+
+
+        print("\n-- LoRa Configured --\n")
+
+    cadSymbolNum = cad_cfg['cadSymbolNum']
+    cadDetPeak = cad_cfg['cadDetPeak']
+    cadDetMin = cad_cfg['cadDetMin']
+    cadExitMode = cad_cfg['cadExitMode']
+    cadTimeout  = cad_cfg['cadTimeout']
+    LoRa.setCadParams(cadSymbolNum, cadDetPeak, cadDetMin, cadExitMode, cadTimeout)
     LoRa.request(LoRa.RX_CONTINUOUS)
     LoRa.setCad()
     
@@ -82,8 +99,15 @@ def setup_lora(LoRa,f, sf, bw, cr, power, prot):
         LoRa.end()
 
 
+def read_configurations(file_path):
+    with open(file_path, 'r') as file:
+        configurations = yaml.safe_load(file)
+    return configurations
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='LoRa Transmitter') 
+    parser.add_argument("--cfg", type=str, default="lora_cfg.yaml", help="Configuration file")
     parser.add_argument("--f", type=int, default=868000000, help="Frequency in Hz")
     parser.add_argument("--sf", type=int, default=7, help="Spreading factor")
     parser.add_argument("--bw", type=int, default=125000, help="Bandwidth in Hz")
@@ -91,9 +115,11 @@ if __name__ == "__main__":
     parser.add_argument("--power", type=int, default=22, help="Transmit power in dBm")
     parser.add_argument("--prot", type=int, default=0, help="Protocol 0: LoRa, 1: FSK")
     args = parser.parse_args() 
+    if args.cfg:
+        configurations = read_configurations(args.cfg)
     LoRa = SX126x()
     try:
-        setup_lora(LoRa,args.f, args.sf, args.bw, args.cr, args.power, args.prot)
+        setup_lora(LoRa, configurations)
     except KeyboardInterrupt:
         print("Program terminated by user")
     finally:

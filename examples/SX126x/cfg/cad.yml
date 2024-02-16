@@ -1,0 +1,13 @@
+modem_cfg:
+  protocol: 1
+  frequency: 868000000
+  spreading_factor: 7
+  bandwidth: 125000
+  coding_rate: 4
+  power: 22
+cad_cfg:
+  cadSymbolNum: 0
+  cadDetPeak: 22
+  cadDetMin: 10
+  cadExitMode: 0 # exit to standby
+  cadTimeout: 2000  #rx Timeout = cadTimeout * 15.625
